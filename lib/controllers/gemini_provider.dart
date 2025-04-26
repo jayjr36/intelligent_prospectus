@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:intelligent_prospectus/secrets.dart';
 import 'package:pdf_gemini/pdf_gemini.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -52,8 +53,7 @@ class GeminiProvider extends ChangeNotifier {
 
   Future<void> _initializeGemini() async {
     try {
-      _genaiClient =
-          GenaiClient(geminiApiKey: 'AIzaSyC-biuW-m-fovC5dV7gb_g52vVJ-H-hrTw');
+      _genaiClient = GenaiClient(geminiApiKey: AppSecrets.password);
       status = "Ready to upload your PDF.";
     } catch (e) {
       status = "Failed to initialize Gemini.";
