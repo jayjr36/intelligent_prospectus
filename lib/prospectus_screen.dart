@@ -29,7 +29,7 @@ class _ProspectusHomePageState extends State<ProspectusHomePage>
 
   // late GenerativeModel _geminiModel;
   late GenaiClient _genaiClient;
-  GenaiFile? _uploadedFile;
+  // GenaiFile? _uploadedFile;
 
   String _status = "Upload a university prospectus PDF";
   String _spokenText = "";
@@ -194,6 +194,7 @@ class _ProspectusHomePageState extends State<ProspectusHomePage>
 //   }
 
   Widget build(BuildContext context) {
+    double h = MediaQuery.of(context).size.height;
      final provider = Provider.of<GeminiProvider>(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -204,15 +205,18 @@ class _ProspectusHomePageState extends State<ProspectusHomePage>
         elevation: 0,
         centerTitle: true,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.indigo.shade900, Colors.blue.shade300],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: GestureDetector(
+        onTap: () => provider.startVoiceQuestion(),
+        onDoubleTap: () => provider.askQuestion(_textController.text),
+        child: Container(
+          height: h,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.indigo.shade900, Colors.blue.shade300],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
-        ),
-        child: Center(
           child: SlideTransition(
             position: _offsetAnimation,
             child: Padding(
@@ -222,6 +226,7 @@ class _ProspectusHomePageState extends State<ProspectusHomePage>
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                   child: Container(
+                    height: h,
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.15),
@@ -230,7 +235,8 @@ class _ProspectusHomePageState extends State<ProspectusHomePage>
                     ),
                     child: SingleChildScrollView(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                          provider.status,
@@ -241,41 +247,43 @@ class _ProspectusHomePageState extends State<ProspectusHomePage>
                               // Colors.white),
                           // const SizedBox(height: 12),
                          
-                          TextField(
-                            controller: _textController,
-                            style: TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
-                              labelText: "Type your question",
-                              labelStyle: TextStyle(color: Colors.white),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              prefixIcon:
-                                  Icon(Icons.text_fields, color: Colors.white),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _glassButton(
-                              Icons.send,
-                              "Ask with Text",
-                              () => provider.askQuestion(_textController.text),
-                              // _uploadedFile != null
-                                  //  _submitTextQuestion,
-                                  // : null,
-                              Colors.white),
-                          const SizedBox(height: 12),
-                          _glassButton(Icons.cancel, "Cancel", ()=> provider.stopInteraction(),
-                              Colors.redAccent),
-                          const SizedBox(height: 24),
-                           _roundGlassButton(
-                              Icons.mic,
-                              "",
-                              // _uploadedFile != null
-                                  () => provider.startVoiceQuestion(),
-                                  // : null,
-                              Colors.white),
+                          // TextField(
+                          //   controller: _textController,
+                          //   style: TextStyle(color: Colors.white),
+                          //   decoration: InputDecoration(
+                          //     filled: true,
+                          //     fillColor: Colors.white.withOpacity(0.1),
+                          //     labelText: "Type your question",
+                          //     labelStyle: TextStyle(color: Colors.white),
+                          //     border: OutlineInputBorder(
+                          //       borderRadius: BorderRadius.circular(12),
+                          //     ),
+                          //     prefixIcon:
+                          //         Icon(Icons.text_fields, color: Colors.white),
+                          //   ),
+                          // ),
+                          // const SizedBox(height: 12),
+                          // _glassButton(
+                          //     Icons.send,
+                          //     "Ask with Text",
+                          //     () => provider.askQuestion(_textController.text),
+                          //     // _uploadedFile != null
+                          //         //  _submitTextQuestion,
+                          //         // : null,
+                          //     Colors.white),
+                          // const SizedBox(height: 12),
+                          // _glassButton(Icons.cancel, "Cancel", ()=> provider.stopInteraction(),
+                          //     Colors.redAccent),
+                          // const SizedBox(height: 24),
+                           Center(
+                             child: _roundGlassButton(
+                                Icons.mic,
+                                "",
+                                // _uploadedFile != null
+                                    () => provider.startVoiceQuestion(),
+                                    // : null,
+                                Colors.white),
+                           ),
                           const SizedBox(height: 12),
                           if (_spokenText.isNotEmpty)
                             Container(

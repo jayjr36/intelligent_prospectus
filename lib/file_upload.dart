@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:intelligent_prospectus/controllers/gemini_provider.dart';
+import 'package:intelligent_prospectus/prospectus/home_scrn.dart';
 import 'package:pdf_gemini/pdf_gemini.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -151,14 +152,15 @@ class _FileUploadScreenState extends State<FileUploadScreen>
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton.icon(
-                            onPressed: () => provider.uploadFile(),
+                            onPressed: () => provider.uploadFile(context),
                             icon: Icon(Icons.upload, color: Colors.white),
                             label: Text("Upload File",
                                 style: TextStyle(color: Colors.white)),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
-                              backgroundColor: Colors.white.withOpacity(0.2),
-                              shadowColor: Colors.black.withOpacity(0.2),
+                              backgroundColor:
+                                  Colors.white.withValues(alpha: .2),
+                              shadowColor: Colors.black.withValues(alpha: 0.2),
                               elevation: 4,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18),
@@ -200,6 +202,16 @@ class _FileUploadScreenState extends State<FileUploadScreen>
               ),
             ),
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ProspectusQA()));
+        },
+        child: const Icon(
+          Icons.arrow_forward_ios_outlined,
+          color: Colors.white,
         ),
       ),
     );

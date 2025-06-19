@@ -1,24 +1,25 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:ui';
-
-import 'package:intelligent_prospectus/home.dart'; // For BackdropFilter
+import 'package:intelligent_prospectus/home.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // Animation control variables
   double _opacity = 0.0;
   double _topPosition = 100.0;
-  TextStyle _textStyle =
-  TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white);
 
-  // Timer to navigate after animation finishes
+  TextStyle _textStyle = const TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    color: Colors.black87,
+  );
+
   @override
   void initState() {
     super.initState();
@@ -26,74 +27,104 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startAnimation() async {
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
       _opacity = 1.0;
       _topPosition = 50.0;
-      _textStyle = TextStyle(
-          fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blueAccent);
+      _textStyle = const TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        color: Colors.blueAccent,
+        letterSpacing: 1.0,
+      );
     });
 
-    // Wait for a few seconds before navigating to the next page
-    Timer(Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    double h = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.blueAccent,
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Apply glassmorphism effect
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          // Light blur for modern feel
+          
+           BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(20),
-              ),
+              color: Colors.white.withOpacity(0.05),
             ),
           ),
+
           Center(
             child: AnimatedOpacity(
               opacity: _opacity,
-              duration: Duration(seconds: 1),
+              duration: const Duration(milliseconds: 900),
               child: AnimatedAlign(
-                duration: Duration(seconds: 1),
-                alignment: Alignment(
-                    0,
-                    _topPosition == 50.0
-                        ? -0.5
-                        : 0), // animate vertical movement
+                duration: const Duration(milliseconds: 900),
+                alignment:
+                    _topPosition == 50.0 ? Alignment.topCenter : Alignment.center,
+                curve: Curves.easeOut,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    SizedBox(height: h*0.2,),
+                    // --- DIT Logo with circular frame ---
                     AnimatedContainer(
-                      duration: Duration(seconds: 1),
-                      curve: Curves.easeInOut,
-                      width: 100,
-                      height: 100,
+                      duration: const Duration(milliseconds: 800),
+                      width: 120,
+                      height: 120,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(50),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.blueAccent, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 12,
+                            spreadRadius: 2,
+                            offset: Offset(0, 6),
+                          ),
+                        ],
                       ),
-                      child: Icon(
-                        Icons.school,
-                        size: 50,
-                        color: Colors.blueAccent,
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/dit_logo.png', // <- Make sure this exists
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 30),
+
+                    // Title
                     AnimatedDefaultTextStyle(
-                      duration: Duration(seconds: 1),
+                      duration: const Duration(milliseconds: 900),
                       style: _textStyle,
-                      child: Text("Welcome to Digital Prospectus",
-                          textAlign: TextAlign.center),
+                      curve: Curves.easeInOut,
+                      child: const Text(
+                        "Dar es Salaam Institute of Technology",
+                        textAlign: TextAlign.center,
+                         style: TextStyle(
+                        // color: Colors.black54,
+                        fontSize: 18,
+                        letterSpacing: 0.8,
+                      ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Digital Prospectus",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 16,
+                        letterSpacing: 0.8,
+                      ),
                     ),
                   ],
                 ),
