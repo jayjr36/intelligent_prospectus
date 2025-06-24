@@ -26,6 +26,8 @@ dependencies:
   provider: 
   glassmorphism: ^3.0.0
   url_launcher: ^6.3.1
+  manual_speech_to_text: ^1.0.3
+  dio: ^5.8.0+1
 
 dev_dependencies:
   flutter_test:

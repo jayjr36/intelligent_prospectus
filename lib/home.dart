@@ -1,10 +1,92 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:intelligent_prospectus/prospectus/home_scrn.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-class HomeScreen extends StatelessWidget {
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _lastWords = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+    _initSpeechState();
+  }
+
+  void _initSpeechState() async {
+    // Check for speech recognition availability and request permissions
+    bool available = await _speech.initialize(
+      onStatus: (status) => print('Speech recognition status: $status'),
+      onError: (errorNotification) => print('Speech recognition error: $errorNotification'),
+    );
+    if (!available) {
+      print("The device doesn't support speech recognition.");
+      // Optionally, show a message to the user that voice commands are not available
+    }
+  }
+ /// Each time to start a speech recognition session
+  void _startListening() async {
+    _lastWords = ''; // Clear previous words
+    await _speech.listen(
+      onResult: _onSpeechResult,
+      listenFor: const Duration(seconds: 10), // Listen for up to 10 seconds
+      pauseFor: const Duration(seconds: 3),   // Pause if no speech for 3 seconds
+      partialResults: true,                   // Get results as they are spoken
+      localeId: 'en_US',                      // Specify locale, e.g., 'en_US'
+    );
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  /// Manually stop the active speech recognition session
+  void _stopListening() async {
+    await _speech.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  /// This is called every time a speech recognition result is available.
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+    });
+    // Process the voice command
+    _processVoiceCommand(_lastWords);
+  }
+
+    // --- Voice Command Processing ---
+  void _processVoiceCommand(String command) {
+    final lowerCaseCommand = command.toLowerCase();
+
+    if (lowerCaseCommand.contains('prospectus enquiry') || lowerCaseCommand.contains('prospectus')) {
+      Navigator.pushNamed(context, '/prospectus');
+      _stopListening(); // Stop listening after command is executed
+    } else if (lowerCaseCommand.contains('admission guidelines') || lowerCaseCommand.contains('admission')) {
+      Navigator.pushNamed(context, '/admission');
+      _stopListening();
+    } else if (lowerCaseCommand.contains('dit programs') || lowerCaseCommand.contains('programs') || lowerCaseCommand.contains('programmes')) {
+      Navigator.pushNamed(context, '/programmes');
+      _stopListening();
+    }
+    // Add more commands as needed
+    // else if (lowerCaseCommand.contains('go back') || lowerCaseCommand.contains('back')) {
+    //   Navigator.pop(context);
+    //   _stopListening();
+    // }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,12 +157,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.push(context, MaterialPageRoute(builder: (context) => ProspectusQA()));
-      //   },
-      //   child: Icon(Icons.book),
-      // )
     );
   }
 
@@ -155,5 +231,4 @@ Widget _glassmorphicButtonContainer(BuildContext context, String label, VoidCall
     ),
   );
 }
-
 }
